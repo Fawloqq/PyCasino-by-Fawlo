@@ -1,5 +1,6 @@
 import sys
 from player_data_handler import PlayerHandler, Player
+from games import Roulette
 
 def main() -> None:
     print(80 * '=' + '\n' + 30 * ' ' + 'WELCOME TO PYCASINO\n' + 80 * '=')
@@ -68,6 +69,46 @@ def main() -> None:
 
 
     print(80 * '=' + '\n' + 20 * ' ' + f'You are coming to casino as {current_user.name}\n' + 80 * '=')
+    while True:
+        try:
+            print(f'Your balance: {current_user.balance}$')
+            print(f'Games played: {current_user.games_played}')
+
+            print('\nWhat do you want to do(1-3)')
+            print('1. Roulette')
+            print('2. Load balance')
+            print('3. Exit')
+
+            choice = input('>')
+
+            match choice:
+                case '1':
+                    print('What type of roulette do you wanna play(1-1)')
+                    print('1. bet on colour')
+                    type_of_roulette = input('>')
+                    match type_of_roulette:
+                        case '1':
+                            print(f'Your balance {current_user.balance}$')
+                            bet = int(input('How much do you wanna bet\n>'))
+                            won_prize = Roulette().bet_on_colour(bet)
+                            current_user.balance += won_prize
+                            current_user.games_played += 1
+                            handler.save_player(current_user)
+                        case _:
+                            raise ValueError('Wrong option')
+                case '2':
+                    amount = int(input('How many do you want to load\n>'))
+                    current_user.load_balance(amount)
+                    handler.save_player(current_user)
+                case '3':
+                    print('Goodbye!')
+                    break
+                case _:
+                    raise ValueError('Wrong option')
+        except Exception as e:
+            print(e.args[0])
+
+        
 
 if __name__ == '__main__':
     main()
