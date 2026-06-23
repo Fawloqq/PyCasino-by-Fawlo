@@ -26,22 +26,20 @@ def main() -> None:
                     for player in database:
                         if player['name'] == name:
                             found_player = player
-                        else:
-                            raise ValueError(f'Player with name {name} not found')
+                            break
+    
                     
                     if not found_player:
                         raise ValueError(f'Player with name "{name}" not found.')
-                        
+                    
                     password = input('Enter your password\n>')
                     if found_player['password'] != password:
                         raise ValueError('Wrong password!')
-                    
                     
                     current_user = Player(found_player['name'], found_player['balance'],
                                            found_player['games_played'], found_player['id'],
                                              found_player['password']) 
                     print(f'Logged in successfully! Welcome, {name}.')
-
                 case '2':
                     name = input('Enter your name\n>').strip()
                     
@@ -75,16 +73,21 @@ def main() -> None:
             print(f'Games played: {current_user.games_played}')
 
             print('\nWhat do you want to do(1-3)')
-            print('1. Roulette')
-            print('2. Load balance')
-            print('3. Exit')
+            print('1. Play Roulette🔴⚫️🟢')
+            print('2. Load balance💸')
+            print('3. Log out↩️')
+            print('4. Exit')
 
             choice = input('>')
 
             match choice:
                 case '1':
-                    print('What type of roulette do you wanna play(1-1)')
-                    print('1. bet on colour')
+                    print('What type of roulette do you wanna play(1-2)')
+                    print('1. bet on Colour🔴⚫️')
+                    print('2. bet on Even/Odd🔢')
+                    print('3. bet on dozen📊')
+                    print('4. bet on specific number🎯')
+                    print('5. Exit to menu🔙')
                     type_of_roulette = input('>')
                     match type_of_roulette:
                         case '1':
@@ -94,15 +97,42 @@ def main() -> None:
                             current_user.balance += won_prize
                             current_user.games_played += 1
                             handler.save_player(current_user)
+                        case '2':
+                            print(f'Your balance {current_user.balance}$')
+                            bet = int(input('How much do you wanna bet\n>'))
+                            won_prize = Roulette().bet_on_even_odd(bet)
+                            current_user.balance += won_prize
+                            current_user.games_played += 1
+                            handler.save_player(current_user)
+                        case '3':
+                            print(f'Your balance {current_user.balance}$')
+                            bet = int(input('How much do you wanna bet\n>'))
+                            won_prize = Roulette().bet_on_dozen(bet)
+                            current_user.balance += won_prize
+                            current_user.games_played += 1
+                            handler.save_player(current_user)
+                        case '4':
+                            print(f'Your balance {current_user.balance}$')
+                            bet = int(input('How much do you wanna bet\n>'))
+                            won_prize = Roulette().bet_on_number(bet)
+                            current_user.balance += won_prize
+                            current_user.games_played += 1
+                            handler.save_player(current_user)
+                        case '5':
+                            print('Coming back to menu')
                         case _:
                             raise ValueError('Wrong option')
+                        
                 case '2':
                     amount = int(input('How many do you want to load\n>'))
                     current_user.load_balance(amount)
                     handler.save_player(current_user)
                 case '3':
-                    print('Goodbye!')
-                    break
+                    print('Logging out')
+                    current_user = None
+                    main()
+                case '4':
+                    sys.exit('Goodbye!')
                 case _:
                     raise ValueError('Wrong option')
         except Exception as e:
