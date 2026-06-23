@@ -13,7 +13,7 @@ A lightweight, object-oriented Casino Simulator built with Python. Features a ro
 | Status | Feature / Game | Description |
 | :---: | :--- | :--- |
 | 🟢 | **Account System** | User sign-up, secure login, and JSON state persistence. |
-| 🟡 | **Slot Machine** | Classical 3-reel slot mechanism with customizable betting and multipliers. |
+| 🟢 | **Slot Machine** | Classical 3-reel slot mechanism with customizable betting and multipliers. |
 | 🔴 | **Blackjack** | Dynamic card-dealing logic against a virtual dealer. |
 
 *Legend: 🟢 Completed | 🟡 In Progress | 🔴 Planned*
