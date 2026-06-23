@@ -1,6 +1,6 @@
 import sys
 from player_data_handler import PlayerHandler, Player
-from games import Roulette
+from games import Roulette, SlotMachine
 
 def main() -> None:
     print(80 * '=' + '\n' + 30 * ' ' + 'WELCOME TO PYCASINO\n' + 80 * '=')
@@ -74,6 +74,7 @@ def main() -> None:
 
             print('\nWhat do you want to do(1-3)')
             print('1. Play Roulette🔴⚫️🟢')
+            print('2. Play Slot machine🎰')
             print('2. Load balance💸')
             print('3. Log out↩️')
             print('4. Exit')
@@ -122,16 +123,22 @@ def main() -> None:
                             print('Coming back to menu')
                         case _:
                             raise ValueError('Wrong option')
-                        
                 case '2':
+                    print(f'Your balance {current_user.balance}$')
+                    bet = int(input('How much do you wanna bet\n>'))
+                    won_prize = SlotMachine().play(bet)
+                    current_user.balance += won_prize
+                    current_user.games_played += 1
+                    handler.save_player(current_user)
+                case '3':
                     amount = int(input('How many do you want to load\n>'))
                     current_user.load_balance(amount)
                     handler.save_player(current_user)
-                case '3':
+                case '4':
                     print('Logging out')
                     current_user = None
                     main()
-                case '4':
+                case '5':
                     sys.exit('Goodbye!')
                 case _:
                     raise ValueError('Wrong option')

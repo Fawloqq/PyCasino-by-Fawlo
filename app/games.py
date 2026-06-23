@@ -33,7 +33,7 @@ class Roulette:
             raise ValueError(f'Bet must be between {self.MIN_BET}$ and {self.MAX_BET}$')
 
         while True:
-            print('\nWelcome to Roulette - bet on colour')
+            print('\n ==== 🔴⚫️Welcome to Roulette - bet on colour⚫️🔴 ====')
             print('Choose colour (1-3):')
             print('1. Red🔴')
             print('2. Black⚫️')
@@ -86,7 +86,7 @@ class Roulette:
             raise ValueError(f'Bet must be between {self.MIN_BET}$ and {self.MAX_BET}$')
         
         while True:
-            print('\nWelcome to Roulette - bet on Even/Odd')
+            print('\n ==== 🔢Welcome to Roulette - bet on Even/Odd🔢 =====')
             print('Choose option (1-2):')
             print('1. Even')
             print('2. Odd')
@@ -136,7 +136,7 @@ class Roulette:
             raise ValueError(f'Bet must be between {self.MIN_BET}$ and {self.MAX_BET}$')
         
         while True:
-            print('\nWelcome to Roulette - bet on dozen')
+            print('\n==== 📊Welcome to Roulette - bet on dozen📊 ====')
             print('Choose dozen (1-3):')
             print('1. First (1-12)')
             print('2. Second (13-24)')
@@ -189,7 +189,7 @@ class Roulette:
             raise ValueError(f'Bet must be between {self.MIN_BET}$ and {self.MAX_BET}$')
         
         while True:
-            print('\nWelcome to Roulette - bet on number')
+            print('\==== 🎯Welcome to Roulette - bet on number🎯 ====')
             print('Choose number (0-36):')
             number = int(input('>'))
 
@@ -228,55 +228,53 @@ class Roulette:
                 print('😢 You lost, keep trying!')
                 return 0 - bet
     
-    def bet_on_dozen(self, bet: int) -> int:
+class SlotMachine:
+    MIN_BET = 10
+    MAX_BET = 500
+    CHERRY = '🍒'
+    LEMON = '🍋'
+    BELL = '🔔'
+    DIAMOND = '💎'
+    symbols = [CHERRY, CHERRY, LEMON, LEMON, LEMON, LEMON, BELL, DIAMOND, CHERRY, CHERRY, LEMON, LEMON, LEMON, LEMON, BELL]
+
+    def play(self, bet: int) -> int:
         if self.MIN_BET > bet or self.MAX_BET < bet:
             raise ValueError(f'Bet must be between {self.MIN_BET}$ and {self.MAX_BET}$')
-        
-        while True:
-            print('\nWelcome to Roulette - bet on dozen')
-            print('Choose dozen (1-3):')
-            print('1. First (1-12)')
-            print('2. Second (13-24)')
-            print('3. Third (25-36)')
-            dozen = input('>')
 
-            if dozen not in ['1', '2', '3']:
-                print('❌ Wrong option! Choose 1, 2, 3')
-                continue
+        print('====== 🎰SLOT MACHINE🎰 ======')
+        print('Spinning the reels...')
 
-            if dozen == '1':
-                chosen, multiplier = 1 , 2.5
-            elif dozen == '2':
-                chosen, multiplier = 2, 2.5
-            elif dozen == '3':
-                chosen, multiplier = 3, 2.5
-    
-            print(f'Your choice is {chosen}')
-            confirmed = input('Confirm (y/n): ').lower().strip()
+        reel1 = random.choice(self.symbols)
+        reel2 = random.choice(self.symbols)
+        reel3 = random.choice(self.symbols)
 
-            if confirmed == 'n':
-                print('Coming back to Roulette menu...')
-                return bet
+        time.sleep(1)
+        print(f'[ {reel1} ]', end='', flush=True)
+        time.sleep(1)
+        print(f'[ {reel2} ]', end='', flush=True)
+        time.sleep(1)
+        print(f'[ {reel3} ]\n')
+        time.sleep(1)
 
-            if confirmed != 'y':
-                print('❌ Wrong option! Enter "y" or "n".')
-                continue
-
-            print('Drawing...')
-            time.sleep(0.5)
-            print('.')
-            time.sleep(0.5)
-            print('.')
-            
-            random_number = random.randint(0, 36)
-            randomed_colour = Roulette.get_colour(random_number)
-            randomed_dozen = Roulette.get_dozen(random_number)
-            print(f'\nThe ball landed on: {random_number} [{randomed_dozen}] ({randomed_colour})')
-
-            if randomed_dozen == chosen:
-                won_prize = int(bet * multiplier)
-                print(f'🎉 Congratulations you won! Your total prize is {won_prize}$')
-                return won_prize
+        if reel1 == reel2 == reel3:
+            if reel1 == self.DIAMOND:
+                multiplier = 25
+            elif reel1 == self.BELL:
+                multiplier = 10
+            elif reel1 == self.CHERRY:
+                multiplier = 5
             else:
-                print('😢 You lost, keep trying!')
-                return 0 - bet
+                multiplier = 2
+            
+            won_prize = int(bet * multiplier)
+            print(f'🎉 JACKPOT! 3x {reel1}! You won {won_prize}$')
+            return won_prize
+        
+        elif reel1 == reel2 or reel2 == reel3 or reel1 == reel3:
+            won_prize = int(bet * 1.5)
+            print(f'👍 Nice! 2x matching symbols. You won {won_prize}$')
+            return won_prize
+
+        else:
+            print('😢 No luck this time. Keep trying!')
+            return 0 - bet    
