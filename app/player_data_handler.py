@@ -10,7 +10,7 @@ class Player:
     id: int = 0
     password: str = '0000'
 
-
+    @staticmethod
     def player_from_dict(dict: dict[str, int]) -> Self:
         return Player(name=dict['name'], balance=dict['balance'], games_played=dict['games_played'], id=dict['id'], password=dict['password'])
 
@@ -31,6 +31,10 @@ class PlayerHandler:
         if not os.path.exists(self.path):
             with open(self.path, "w", encoding="utf-8") as file:
                 json.dump([], file, indent=4)
+        
+    def _save_all_players_raw(self, players: list[dict[str, str | int]]) -> None:
+        with open(self.path, 'w', encoding='utf-8') as file:
+            json.dump(players, file, indent=4, ensure_ascii=False)
 
     def _get_all_players_raw(self) -> list[dict[str, int | str]]:
         with open(self.path, 'r', encoding='utf-8') as file:
@@ -79,3 +83,49 @@ class PlayerHandler:
         
         with open(self.path, 'w', encoding='utf-8') as file:
             json.dump(players_list, file, indent=4, ensure_ascii=False)
+    
+    def delete_account(self, player_id: int) -> None:
+        confirmed = input('Confirm account deletion? (y/n): ').lower().strip()
+
+        if confirmed == 'n':
+            print('Coming back to menu')
+            return 
+
+        if confirmed != 'y':
+            print('❌ Wrong option! Enter "y" or "n".')
+            return
+
+        all_players = self._get_all_players_raw()
+
+        player_exists = any(player['id'] == player_id for player in all_players)
+        
+        if not player_exists:
+            raise ValueError('Player not found')
+        
+        updated_players = [player for player in all_players if player['id'] != player_id]
+        self._save_all_players_raw(updated_players)
+    
+    def change_password(self, player_id: int, new_password: int) -> None:
+        confirmed = input('Confirm password change (y/n): ').lower().strip()
+
+        if confirmed == 'n':
+            print('Coming back to menu')
+            return 
+
+        if confirmed != 'y':
+            print('❌ Wrong option! Enter "y" or "n".')
+            return
+    
+        all_players = self._get_all_players_raw()
+
+
+        player_exists = any(player['id'] == player_id for player in all_players)
+        
+        if not player_exists:
+            raise ValueError('Player not found')
+        
+        for player in all_players:
+            if player['id'] == player_id:
+                player['password'] = new_password
+        
+        self._save_all_players_raw(all_players)

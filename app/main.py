@@ -32,7 +32,7 @@ def main() -> None:
                     if not found_player:
                         raise ValueError(f'Player with name "{name}" not found.')
                     
-                    password = input('Enter your password\n>')
+                    password = int(input('Enter your password\n>'))
                     if found_player['password'] != password:
                         raise ValueError('Wrong password!')
                     
@@ -47,7 +47,7 @@ def main() -> None:
                     if any(p["name"] == name for p in database):
                         raise ValueError('Name already taken!')
                         
-                    password = input('Create password\n>')
+                    password = int(input('Create password\n>'))
                     
                     player = Player.create_player(name, password)
                     handler.save_player(player)
@@ -75,9 +75,8 @@ def main() -> None:
             print('\nWhat do you want to do(1-3)')
             print('1. Play Roulette🔴⚫️🟢')
             print('2. Play Slot machine🎰')
-            print('2. Load balance💸')
-            print('3. Log out↩️')
-            print('4. Exit')
+            print('3. Open account manager👤')
+            print('4. Exit🔙')
 
             choice = input('>')
 
@@ -131,14 +130,40 @@ def main() -> None:
                     current_user.games_played += 1
                     handler.save_player(current_user)
                 case '3':
-                    amount = int(input('How many do you want to load\n>'))
-                    current_user.load_balance(amount)
-                    handler.save_player(current_user)
+                    print('What do you want do to with your account(1-2)')
+                    print('1. Load balance💸')
+                    print('2. Log out↩️')
+                    print('3. Delete account❌')
+                    print('4. Change password🔐')
+                    print('5. Exit to menu🔙')
+                    option = input('>')
+
+                    match option:
+                        case '1':
+                            amount = int(input('How many do you want to load\n>'))
+                            current_user.load_balance(amount)
+                            handler.save_player(current_user)
+                        
+                        case '2':
+                            print('Logging out')
+                            current_user = None
+                            main()
+                        case '3':
+                            handler.delete_account(current_user.id)
+                            print('Account deleted succesfully')
+                            current_user = None
+                            main()
+                        case '4':
+                            new_password = int(input('Write new password\n>'))
+                            handler.change_password(current_user.id, new_password)
+                            print('Password changed succesfully!')
+                            current_user = None
+                            main()
+                        case '5':
+                            print('Coming back to menu')
+                        case _:
+                            raise ValueError('Wrong option')  
                 case '4':
-                    print('Logging out')
-                    current_user = None
-                    main()
-                case '5':
                     sys.exit('Goodbye!')
                 case _:
                     raise ValueError('Wrong option')
