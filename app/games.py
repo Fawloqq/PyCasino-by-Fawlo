@@ -189,7 +189,7 @@ class Roulette:
             raise ValueError(f'Bet must be between {self.MIN_BET}$ and {self.MAX_BET}$')
         
         while True:
-            print('\==== 🎯Welcome to Roulette - bet on number🎯 ====')
+            print('==== 🎯Welcome to Roulette - bet on number🎯 ====')
             print('Choose number (0-36):')
             number = int(input('>'))
 
@@ -241,7 +241,7 @@ class SlotMachine:
         if self.MIN_BET > bet or self.MAX_BET < bet:
             raise ValueError(f'Bet must be between {self.MIN_BET}$ and {self.MAX_BET}$')
 
-        print('====== 🎰SLOT MACHINE🎰 ======')
+        print('====== 🎰WELCOME TO SLOT MACHINE🎰 ======')
         print('Spinning the reels...')
 
         reel1 = random.choice(self.symbols)
@@ -277,4 +277,97 @@ class SlotMachine:
 
         else:
             print('😢 No luck this time. Keep trying!')
-            return 0 - bet    
+            return 0 - bet
+
+class BlackJack:
+    MIN_BET = 10
+    MAX_BET = 500
+
+    def _create_deck(self) -> list[str]:
+        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+        deck = ranks * 4
+        random.shuffle(deck)
+        return deck
+    
+    def _calculate_score(self, hand: list[str]) -> int:
+        score = 0
+        aces = 0
+
+        for card in hand:
+            if card in ['J', 'Q', 'K']:
+                score += 10
+            elif card == 'A':
+                score += 11
+                aces += 1
+            else:
+                score += int(card)
+        
+        while score > 21 and aces > 0:
+            score -= 10
+            aces -= 1
+        
+        return score
+    
+    def play(self, bet: int) -> int:
+        if self.MIN_BET > bet or self.MAX_BET < bet:
+            raise ValueError(f'Bet must be between {self.MIN_BET}$ and {self.MAX_BET}$')
+        
+        deck = self._create_deck()
+        player_hand = [deck.pop(), deck.pop()]
+        dealer_hand = [deck.pop(), deck.pop()]
+
+        print('==== 🃏WELCOME TO BLACKJACK🃏 ====')
+
+        while True:
+            player_score = self._calculate_score(player_hand)
+            print(f'\nYour cards: {player_hand} (Score: {player_score})')
+            print(f'Dealer\'s visible card: {dealer_hand[0]}')
+
+            if player_score == 21:
+                print('✨ Blackjack!')
+                break
+            if player_score > 21:
+                print('💥 Bust! You went over 21.')
+                print(f'You lost {bet}$')
+                return 0 - bet
+            
+            choice = input('Do you want to (1)Hit or (2)Stand\n>')
+
+            if choice == '1':
+                print('Drawing card...')
+                time.sleep(0.5)
+                player_hand.append(deck.pop())
+            elif choice == '2':
+                break
+            else:
+                print('❌ Invalid option! Choose 1 or 2.')
+
+        print(f'\nDealer reveals hidden card: {dealer_hand}')
+        dealer_score = self._calculate_score(dealer_hand)
+
+        while dealer_score < 17:
+            print('Dealer draws a card...')
+            time.sleep(0.8)
+            dealer_hand.append(deck.pop())
+            dealer_score = self._calculate_score(dealer_hand)
+            print(f'Dealer\'s cards: {dealer_hand} (Score: {dealer_score})')
+
+        print(f'\nFinal Standings:')
+        print(f'➡️ You: {player_score}')
+        print(f'➡️ Dealer: {dealer_score}')
+
+        if dealer_score > 21:
+            print('🎉 Dealer busted! You win!')
+            print(f'You won {int(bet) * 2}$')
+            return int(bet * 2)
+        elif player_score > dealer_score:
+            print('🎉 You win!')
+            print(f'You won {int(bet) * 2}$')
+            return int(bet * 2)
+        elif player_score < dealer_score:
+            print('😢 Dealer wins!')
+            print(f'You lost {bet}$')
+            return 0 - bet
+        else:
+            print('🤝 It\'s a tie (Push)! Your bet is returned.')
+            return 0
