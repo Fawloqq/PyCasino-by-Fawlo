@@ -12,10 +12,10 @@ class Player:
 
     @staticmethod
     def player_from_dict(dict: dict[str, int]) -> Self:
-        return Player(name=dict['name'], balance=dict['balance'], games_played=dict['games_played'], id=dict['id'], password=dict['password'])
+        return Player(name=dict['name'], balance=dict['balance'], games_played=dict['games_played'], id=int(dict['id']), password=dict['password'])
 
     @staticmethod
-    def create_player(name: str, password: int) -> Self:
+    def create_player(name: str, password: str) -> Self:
         id = PlayerHandler().get_max_id() + 1
         return Player(name, 1000, 0, id, password)
 
@@ -105,7 +105,7 @@ class PlayerHandler:
         updated_players = [player for player in all_players if player['id'] != player_id]
         self._save_all_players_raw(updated_players)
     
-    def change_password(self, player_id: int, new_password: int) -> None:
+    def change_password(self, player_id: int, new_password: str) -> None:
         confirmed = input('Confirm password change (y/n): ').lower().strip()
 
         if confirmed == 'n':
