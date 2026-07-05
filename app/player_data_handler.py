@@ -1,6 +1,7 @@
 import json, os
 from dataclasses import dataclass
 from typing import Self
+from password_handler import PasswordHandler
 
 @dataclass
 class Player:
@@ -124,8 +125,10 @@ class PlayerHandler:
         if not player_exists:
             raise ValueError('Player not found')
         
+        hashed_new_password = PasswordHandler.hash_password(new_password)
+        
         for player in all_players:
             if player['id'] == player_id:
-                player['password'] = new_password
+                player['password'] = hashed_new_password
         
         self._save_all_players_raw(all_players)

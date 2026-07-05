@@ -1,6 +1,7 @@
 import sys
 from player_data_handler import PlayerHandler, Player
 from games import Roulette, SlotMachine, BlackJack
+from password_handler import PasswordHandler
 
 def main() -> None:
     print(80 * '=' + '\n' + 30 * ' ' + 'WELCOME TO PYCASINO\n' + 80 * '=')
@@ -38,7 +39,7 @@ def main() -> None:
                             raise ValueError(f'Player with name "{name}" not found.')
                         
                         password = input('Enter your password\n>')
-                        if found_player['password'] != password:
+                        if not PasswordHandler.verify_password(password, found_player['password']):
                             raise ValueError('Wrong password!')
                         
                         current_user = Player(found_player['name'], found_player['balance'],
@@ -53,8 +54,9 @@ def main() -> None:
                             raise ValueError('Name already taken!')
                             
                         password = input('Create password\n>')
+                        hashed_password = PasswordHandler.hash_password(password)
                         
-                        player = Player.create_player(name, password)
+                        player = Player.create_player(name, hashed_password)
                         handler.save_player(player)
                         
                         print('Account created successfully! You are now logged in.')
